@@ -24,13 +24,6 @@ USER spring
 # Copy the fat jar from the build stage
 # Adjust the jar name if your artifact is different
 COPY --from=build /app/target/*-SNAPSHOT.jar app.jar
-RUN java -Djarmode=layertools -jar app.jar extract
-
-# 2. Add layers in correct order (cached!)
-COPY --from=build /app/dependencies/ ./
-COPY --from=build /app/spring-boot-loader/ ./
-COPY --from=build /app/snapshot-dependencies/ ./
-COPY --from=build /app/application/ ./
 
 # Optional: set heap ergonomics for containers
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport"
