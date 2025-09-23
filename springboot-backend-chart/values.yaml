@@ -1,0 +1,2 @@
+# Full image reference, including tag
+image: "docker.io/andresl123/springboot-backend:latest"
