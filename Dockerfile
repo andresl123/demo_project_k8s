@@ -5,10 +5,12 @@ WORKDIR /app
 # Leverage Docker layer caching:
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
+RUN chmod +x mvnw
 RUN ./mvnw -q -B -DskipTests dependency:go-offline
 
 # Copy sources and build
 COPY src ./src
+RUN chmod +x mvnw
 RUN ./mvnw -q -B -DskipTests package
 
 # ---- 2) Runtime stage ----
