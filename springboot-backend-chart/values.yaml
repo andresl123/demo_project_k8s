@@ -1,2 +1,2 @@
 # Full image reference, including tag
-image: "docker.io/andresl123/springboot-backend:latest"
+image: "andresl123/demo_project_k8s:6"
