@@ -3,9 +3,14 @@ name: springboot-backend
 on:
   push:
     branches: ["back"]
+    paths-ignore:
+      - demo_project_k8s/springboot-backend-chart/values.yaml
 
 env:
   IMAGE_NAME: springboot-backend
+  IMAGE: ${{ secrets.DOCKER_HUB_USERNAME }}/demo_project_k8s
+  TAG: ${{ github.run_number }}
+  VALUES_FILE: springboot-backend-chart/values.yaml
 
 jobs:
   build-and-push:
@@ -14,6 +19,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install yq
+        run: |
+            sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+            sudo chmod +x /usr/local/bin/yq
+
+      - name: Write run number to values.yaml
+        run: |
+          yq -i '.image = "andresl123/demo_project_k8s:" + strenv(TAG)' springboot-backend-chart/values.yaml
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -33,3 +46,11 @@ jobs:
 
       - name: Build the Docker image and push to repo
         run: docker buildx build . --file Dockerfile --platform linux/arm64 --tag ${{ secrets.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} --push
+
+      - name: Commit & push updated values.yaml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${VALUES_FILE}"
+          git commit -m "[skip ci] ci: bump image to $IMAGE:$TAG"
+          git push
