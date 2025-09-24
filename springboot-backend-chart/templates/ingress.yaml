@@ -9,13 +9,17 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: asl.serveblog.net
-      http:
-        paths:
-          - path: /api/?(.*)    # backend under /api
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}
-                port:
-                  number: 8080
+  - host: asl.serveblog.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{ .Release.Name }}
+            port:
+              number: 8080
+        path: /api/?(.*)
+        pathType: Prefix
+  tls:
+  - hosts:
+    - asl.serveblog.net
+    secretName: resume-tls
