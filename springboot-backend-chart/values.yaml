@@ -1,2 +1,2 @@
 # Full image reference, including tag
-image: "andresl123/demo_project_k8s:6"
+image: "andresl123/springboot-backend:7"
